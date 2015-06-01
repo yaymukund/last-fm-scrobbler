@@ -32,6 +32,7 @@ let sign = function(options) {
 
   str += _config.secret;
   options.api_sig = _config.md5(str);
+  return options;
 };
 
 let toFormData = function(obj) {
