@@ -55,8 +55,36 @@ let getSession = function(token) {
   return fetch(API_URL + '?' + toQueryParams(params));
 };
 
+let updateNowPlaying = function(tags) {
+  let params = filterParams(tags, {
+    required: [
+      'artist',
+      'track',
+    ],
+    optional: [
+      'album',
+      'trackNumber',
+      'context',
+      'mbid',
+      'duration',
+      'albumArtist'
+    ]
+  });
+
+  params['format=json'] = config.apiKey;
+  params.method = 'track.updateNowPlaying';
+  params.sk = config.sessionKey;
+  sign(params);
+
+  return fetch(API_URL, {
+    method: 'post',
+    body: toFormData(params)
+  });
+};
+
 export {
   scrobble,
+  updateNowPlaying,
   getToken,
   getSession
 };
