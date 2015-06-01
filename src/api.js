@@ -1,46 +1,62 @@
-import { sign } from './helpers';
+import {
+  sign,
+  config,
+  toFormData,
+  filterParams,
+  toQueryParams
+} from './helpers';
 
-let API_URL = 'http://ws.audioscrobbler.com/2.0/',
-    TAGS = {
-      required: [
-        'artist',
-        'track'
-      ],
-
-      optional: [
-        'album',
-        'trackNumber',
-        'context',
-        'mbid',
-        'duration',
-        'albumArtist'
-      ]
-    };
+let API_URL = 'http://ws.audioscrobbler.com/2.0/';
 
 let scrobble = function(tags) {
-  let params = {};
-
-  TAGS.required.forEach(i => {
-    if (!tags[i]) {
-      throw new Error(`Missing required parameter: ${i}`);
-    }
-
-    params[i] = tags[i];
+  let params = filterParams(tags, {
+    required: [
+      'artist',
+      'track',
+      'timestamp'
+    ],
+    optional: [
+      'album',
+      'trackNumber',
+      'context',
+      'mbid',
+      'duration',
+      'albumArtist'
+    ]
   });
 
-  TAGS.optional.forEach(i => {
-    if (tags[i]) { params[i] = tags[i]; }
-  });
-
+  params['format=json'] = config.apiKey;
+  params.method = 'track.scrobble';
+  params.sk = config.sessionKey;
   sign(params);
 
-  fetch(API_URL, {
+  return fetch(API_URL, {
     method: 'post',
-    body: JSON.stringify(params),
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    }
+    body: toFormData(params)
+  });
+};
+
+let getToken = function() {
+  let params = sign({
+    method: 'auth.getToken',
+    api_key: config.apiKey
   });
 
+  return fetch(API_URL + '?' + toQueryParams(params));
+};
+
+let getSession = function(token) {
+  let params = sign({
+    method: 'auth.getSession',
+    token: token,
+    api_key: config.apiKey
+  });
+
+  return fetch(API_URL + '?' + toQueryParams(params));
+};
+
+export {
+  scrobble,
+  getToken,
+  getSession
 };

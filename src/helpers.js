@@ -18,7 +18,6 @@ let configure = function(config) {
 
 let sign = function(options) {
   options.api_key = _config.apiKey;
-  options.sk = _config.sessionKey;
 
   let keys = Object.keys(options).sort(),
       str = '';
@@ -35,7 +34,53 @@ let sign = function(options) {
   options.api_sig = _config.md5(str);
 };
 
+let toFormData = function(obj) {
+  let formData = new FormData();
+
+  Object.keys(obj).forEach(k => {
+    formData.append(k, obj[k]);
+  });
+
+  return formData;
+};
+
+let filterParams = function(params, keys) {
+  let _p = {};
+
+  if (keys.required) {
+    keys.required.forEach(i => {
+      if (!params[i]) {
+        throw new Error(`Missing required parameter: ${i}`);
+      }
+
+      _p[i] = params[i];
+    });
+  }
+
+  if (keys.optional) {
+    keys.optional.forEach(i => {
+      if (params[i]) { _p[i] = params[i]; }
+    });
+  }
+
+  return _p;
+};
+
+let toQueryParams = function(params) {
+  let args = [];
+
+  Object.keys(params).forEach(k => {
+    args.push(`${k}=${params[k]}`);
+  });
+
+  return args.join('&');
+};
+
 export {
   configure,
+  _config as config,
+  toFormData,
+  filterParams,
+  toQueryParams,
   sign
 };
