@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Test Last.fm Scrobbler</title>
+    <script src="./loader.js"></script>
+    <script src="./md5.min.js"></script>
+    <script src="../dist/last-fm-scrobbler.js"></script>
+    <script>
+      require('last-fm-scrobbler/helpers').configure({
+        apiKey: 'xxx',
+        secret: 'xxx',
+        sessionKey: 'xxx',
+        md5: window.md5
+      });
+    </script>
+  </head>
+  <body>
+    <p>This is the test page.</p>
+  </body>
+</html>
