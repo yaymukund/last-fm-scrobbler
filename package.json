@@ -17,6 +17,8 @@
   "devDependencies": {
     "broccoli": "^0.16.3",
     "broccoli-babel-transpiler": "^5.0.0",
-    "whatwg-fetch": "^0.8.2"
+    "broccoli-es6modules": "^0.6.0",
+    "broccoli-funnel": "^0.2.3",
+    "broccoli-sourcemap-concat": "^0.4.4"
   }
 }
